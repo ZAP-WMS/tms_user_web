@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "tmsapp-53ebc"
+  },
+  "targets": {
+    "tmsapp-53ebc": {
+      "hosting": {
+        "tr": [
+          "tmswebapp"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
