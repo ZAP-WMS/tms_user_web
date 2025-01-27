@@ -314,7 +314,7 @@ class _RaiseTicketState extends State<RaiseTicket> {
                                           content: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
-                                            children: const [
+                                            children: [
                                               SizedBox(
                                                 height: 50,
                                                 width: 50,
@@ -350,8 +350,8 @@ class _RaiseTicketState extends State<RaiseTicket> {
                                           sendNotificationViaGet(
                                               'http://localhost:300/not',
                                               filterProvider.tokenId.toString(),
-                                              'hii abdul',
-                                              'api is working');
+                                              ticketID,
+                                              'This Ticket is raised for you');
 
                                           provider.resetSelections();
                                           remarkController.clear();
