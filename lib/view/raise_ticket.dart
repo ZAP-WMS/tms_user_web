@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:html';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:tms_useweb_app/utils/app_dimensions.dart';
 import 'package:tms_useweb_app/utils/colors.dart';
 import 'package:tms_useweb_app/widgets/inside_pageappBar.dart';
+import 'package:tms_useweb_app/widgets/loading_page.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../controller/work_controller.dart';
 import '../provider/filter_provider.dart';
@@ -65,7 +67,15 @@ class _RaiseTicketState extends State<RaiseTicket> {
     filterProvider = Provider.of<FilterProvider>(context, listen: false);
     raiseDataProvider = Provider.of<RaiseDataProvider>(context, listen: false);
     raiseDataProvider.fetchData();
+    raiseDataProvider.resetSelections();
     super.initState();
+  }
+
+// Function to remove an image from the list by index
+  void removeImage(int index) {
+    setState(() {
+      imageBytesList.removeAt(index);
+    });
   }
 
   @override
@@ -81,8 +91,8 @@ class _RaiseTicketState extends State<RaiseTicket> {
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   alignment: Alignment.centerLeft,
-                  width: AppDimensions.getWidth(context, percentage: 0.6),
-                  height: AppDimensions.getHeight(context, percentage: 0.5),
+                  width: AppDimensions.getWidth(context, percentage: 0.7),
+                  height: AppDimensions.getHeight(context, percentage: 0.6),
                   decoration: BoxDecoration(
                       boxShadow: const [],
                       border: Border.all(color: AppColors.textWhite),
@@ -233,20 +243,39 @@ class _RaiseTicketState extends State<RaiseTicket> {
                                           return GestureDetector(
                                             onTap: () {},
                                             child: Center(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                margin: const EdgeInsets.all(5),
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: Colors.blue),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                child: Image.memory(
-                                                  imageBytesList[index],
-                                                  fit: BoxFit.cover,
-                                                ),
+                                              child: Stack(
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(5),
+                                                    margin:
+                                                        const EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: Colors.blue),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5)),
+                                                    child: Image.memory(
+                                                      imageBytesList[index],
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    right: 5,
+                                                    top: 5,
+                                                    child: GestureDetector(
+                                                      onTap: () =>
+                                                          removeImage(index),
+                                                      child: const Icon(
+                                                        Icons.cancel_outlined,
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                        size: 20,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           );
@@ -258,12 +287,12 @@ class _RaiseTicketState extends State<RaiseTicket> {
                           const SizedBox(height: 10),
                           SizedBox(
                               height: AppDimensions.getHeight(context,
-                                  percentage: 0.02)),
+                                  percentage: 0.01)),
                           Row(
                             children: [
                               CustomButton(
                                   width: AppDimensions.getWidth(context,
-                                      percentage: 0.08),
+                                      percentage: 0.13),
                                   text: 'Pick Image',
                                   onPressed: () async {
                                     // Open file picker and allow multiple files
@@ -316,18 +345,13 @@ class _RaiseTicketState extends State<RaiseTicket> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               SizedBox(
-                                                height: 50,
-                                                width: 50,
-                                                child: Center(
+                                                  height: 50,
+                                                  width: 50,
                                                   child:
                                                       CircularProgressIndicator(
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              151,
-                                                              64,
-                                                              69)),
-                                                ),
-                                              ),
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  )),
                                               Text(
                                                 'Saving...',
                                                 style: TextStyle(
@@ -348,7 +372,7 @@ class _RaiseTicketState extends State<RaiseTicket> {
                                         await storeRaisedTicket(ticketID)
                                             .whenComplete(() async {
                                           sendNotificationViaGet(
-                                              'http://localhost:300/not',
+                                              'https://tms-notification.onrender.com/not/',
                                               filterProvider.tokenId.toString(),
                                               ticketID,
                                               'This Ticket is raised for you');
@@ -705,8 +729,6 @@ class _RaiseTicketState extends State<RaiseTicket> {
 
   Future<void> sendNotificationViaGet(
       String url, String token, String title, String message) async {
-    // Define the query parameters
-    print('token$token');
     final queryParameters = {
       'token': token,
       'title': title,
@@ -714,12 +736,15 @@ class _RaiseTicketState extends State<RaiseTicket> {
     };
 
     // Construct the URI with query parameters
-    final uri = Uri.parse(url).replace(queryParameters: queryParameters);
-    print(uri);
+    final uri = Uri.parse(url);
 
     try {
-      // Perform the GET request with headers
-      final response = await http.get(uri);
+      final response = await http.post(uri,
+          headers: {
+            'Content-Type':
+                'application/json', // Set content type if sending JSON
+          },
+          body: jsonEncode(queryParameters));
       // Check if the request was successful
       if (response.statusCode == 200) {
         // Parse the response body if needed

@@ -69,11 +69,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(checkRole);
     return Scaffold(
         appBar: CustomAppBar(
           title: 'Ticket Manager',
           isCenter: true,
+          userId: widget.userId ?? '',
         ),
         body: Obx(() {
           final selectedModule = controller.selectedModule.value;
@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Expanded(
                   flex: 2,
-                  child: Container(
+                  child: SizedBox(
                     width: AppDimensions.getWidth(context, percentage: 0.2),
                     child: ListView.builder(
                       itemCount: controller.checkRole.value
@@ -230,7 +230,9 @@ class ModuleContent extends StatelessWidget {
       case 'Ticket Report':
         return TicketReport(userID: userId);
       case 'Profile Page':
-        return ProfilePage(userID: userId,);
+        return ProfilePage(
+          userID: userId,
+        );
       case 'ServiceProvider Pending Ticket':
         return ServiceProvidePendingTicket(
             ticketNumber: 'ticketNumber',

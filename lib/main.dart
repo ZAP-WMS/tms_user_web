@@ -1,11 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tms_useweb_app/view/LoginPage/login_page.dart';
+import 'package:tms_useweb_app/routes/routes.dart';
 import 'provider/filter_provider.dart';
 import 'provider/getReport_provider.dart';
 import 'provider/raisedata_provider.dart';
+import 'view/LoginPage/login_page.dart';
 
 void main() async {
   await Firebase.initializeApp(
@@ -19,9 +21,6 @@ void main() async {
         measurementId: "G-88TQTEM40C"),
   );
 
-  // await FlutterDownloader.initialize(
-  //     debug: true // Set this to false in production
-  //     );
   runApp(const MyApp());
 }
 
@@ -39,9 +38,10 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => RaiseDataProvider()),
           ChangeNotifierProvider(create: (context) => ReportProvider()),
         ],
-        child: MaterialApp(
+        child: GetMaterialApp(
+          getPages: AppRoutes.routes,
           debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
+          title: 'TMS_USER_APP',
           theme: ThemeData(
             textTheme: GoogleFonts.poppinsTextTheme(
               Theme.of(context).textTheme,

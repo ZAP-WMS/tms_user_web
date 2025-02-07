@@ -11,6 +11,7 @@ class CustomTextFormField extends StatelessWidget {
   final IconData? icon;
   final String? Function(String?)? validator;
   double? width;
+  TextInputAction? textInputAction;
 
   CustomTextFormField({
     required this.controller,
@@ -20,6 +21,7 @@ class CustomTextFormField extends StatelessWidget {
     this.icon,
     this.validator,
     this.width,
+    this.textInputAction
   });
 
   @override
@@ -27,13 +29,14 @@ class CustomTextFormField extends StatelessWidget {
     return Padding(
       padding: AppDimensions.getPadding(context, percentage: 0.005),
       child: Center(
-        child: Container(
+        child: SizedBox(
           width:
               // platformService.isWeb.value ? width * 0.6 :
               width,
           child: TextFormField(
             controller: controller,
             obscureText: obscureText,
+            textInputAction: textInputAction,
             decoration: InputDecoration(
               labelText: label,
               labelStyle: AppTextStyles.boldBlackColor,

@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_network/image_network.dart';
 import 'package:provider/provider.dart';
 import 'package:tms_useweb_app/utils/colors.dart';
 import 'package:tms_useweb_app/view/image.dart';
+import 'package:tms_useweb_app/widgets/loading_page.dart';
 import '../provider/filter_provider.dart';
 import '../utils/app_dimensions.dart';
 
@@ -108,7 +110,7 @@ class _ReportDetailsState extends State<ReportDetails> {
       'Floor',
       'Room',
       'Asset',
-      'Username',
+      'User',
       'Service Provider',
       'Remark',
       'Image',
@@ -128,40 +130,33 @@ class _ReportDetailsState extends State<ReportDetails> {
           final filteredData = filterProvider.filteredData;
 
           return filterProvider.isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(child: LoadingPage())
               : filterProvider.filteredData.isEmpty
                   ? const Center(child: Text('No data available'))
                   : GridView.builder(
                       padding:
-                          AppDimensions.getPadding(context, percentage: 0.05),
+                          AppDimensions.getPadding(context, percentage: 0.01),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisSpacing: 1.2,
-                              childAspectRatio: 1.0,
+                              crossAxisSpacing: 1.0,
+                              childAspectRatio: 0.8,
                               crossAxisCount: 3),
                       itemCount: filteredData.length,
                       itemBuilder: (context, index) {
                         final data = filteredData[index];
                         print('data$data');
-                        return Card(
-                            margin: AppDimensions.getPadding(context,
-                                percentage: 0.005),
-                            color: data['status'] == 'Open'
-                                ? const Color.fromARGB(255, 240, 210, 247)
-                                : AppColors.secondaryColor,
-                            elevation: 10,
-                            shadowColor: Colors.red,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                padding: const EdgeInsets.all(5),
-                                // decoration: BoxDecoration(
-                                //     border: Border.all(
-                                //         color: AppColors.primary Color,
-                                //         width: 2.0)),
-                                height: 370,
+                        return SizedBox.expand(
+                          child: Card(
+                              margin: AppDimensions.getPadding(context,
+                                  percentage: 0.005),
+                              color: data['status'] == 'Open'
+                                  ? const Color.fromARGB(255, 240, 210, 247)
+                                  : AppColors.secondaryColor,
+                              elevation: 10,
+                              shadowColor: Colors.red,
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
                                 child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
                                   itemCount: titles.length,
                                   itemBuilder: (context, index2) {
                                     print(ticketListData);
@@ -204,12 +199,12 @@ class _ReportDetailsState extends State<ReportDetails> {
                                         message[index2], imageFilePaths);
                                   },
                                 ),
-                              ),
-                              // ListTile(
-                              //   title: Text(data['title'] ?? 'No Title'),
-                              //   subtitle: Text(data['status'] ?? 'No Status'),
-                              // )
-                            ));
+                                // ListTile(
+                                //   title: Text(data['title'] ?? 'No Title'),
+                                //   subtitle: Text(data['status'] ?? 'No Status'),
+                                // )
+                              )),
+                        );
                       },
                     );
         }));
@@ -409,6 +404,19 @@ class _ReportDetailsState extends State<ReportDetails> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 4.0),
                         child: ImageNetwork(
+                          onTap: () {
+                            Get.defaultDialog(
+                              title: '',
+                              content: ImageNetwork(
+                                image: item,
+                                height: AppDimensions.getHeight(context,
+                                    percentage:
+                                        0.7), // Set the height of the image
+                                width: AppDimensions.getWidth(context,
+                                    percentage: 0.5),
+                              ),
+                            );
+                          },
                           image: item,
                           height: 50, // Set the height of the image
                           width: 50,

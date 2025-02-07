@@ -12,7 +12,7 @@ AppBar commonAppBar(
     //     color: AppColors.primaryColor, // Your custom color
     //   ),
     // ),
-    automaticallyImplyLeading: true,
+    automaticallyImplyLeading: false,
     centerTitle: true,
     title: Text(
       title,

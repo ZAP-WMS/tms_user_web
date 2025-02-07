@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tms_useweb_app/utils/app_dimensions.dart';
 import 'package:tms_useweb_app/widgets/inside_pageappBar.dart';
 import '../../widgets/custom_buton.dart';
-import '../service/splash_service.dart';
 import '../utils/colors.dart';
 import '../utils/text_styles.dart';
 
@@ -71,8 +70,8 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 30),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                child: const Column(
-                  children: [
+                child: Column(
+                  children: const [
                     ListTile(
                       leading: Icon(Icons.settings),
                       title: Text('Settings'),

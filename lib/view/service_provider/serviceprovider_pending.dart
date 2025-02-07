@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:tms_useweb_app/utils/colors.dart';
 import 'package:tms_useweb_app/widgets/inside_pageappBar.dart';
 import '../../provider/filter_provider.dart';
 import '../../utils/app_dimensions.dart';
+import 'package:http/http.dart' as http;
 
 class ServiceProvidePendingTicket extends StatefulWidget {
   ServiceProvidePendingTicket(
@@ -175,7 +177,6 @@ class _ServiceProvidePendingTicketState
                                         const NeverScrollableScrollPhysics(),
                                     itemCount: titles.length,
                                     itemBuilder: (context, index2) {
-                                      print(ticketListData);
                                       message = [
                                         value.servicependingData[index]['work'],
                                         value.servicependingData[index]
@@ -240,7 +241,7 @@ class _ServiceProvidePendingTicketState
     Navigator.pop(context);
     showCupertinoDialog(
       context: context,
-      builder: (context) => const CupertinoAlertDialog(
+      builder: (context) => CupertinoAlertDialog(
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
@@ -294,6 +295,16 @@ class _ServiceProvidePendingTicketState
         "isSeen": false,
         "isUserSeen": true,
         'closedDate': currentDate
+      });
+      await getFcmToken(widget.user!).then((fcmToken) {
+        if (fcmToken.isNotEmpty) {
+          sendNotificationViaGet('https://tms-notification.onrender.com/not/',
+              fcmToken, ticketNumber, 'Your Ticket has been Closed.');
+
+          print('FCM Token: $fcmToken');
+        } else {
+          print('FCM Token not found');
+        }
       });
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -371,7 +382,7 @@ class _ServiceProvidePendingTicketState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(icons, color: Color.fromARGB(255, 197, 66, 73)),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
                 title,
                 style:
@@ -385,7 +396,7 @@ class _ServiceProvidePendingTicketState
               width: 100,
               child: Text(
                 message,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                 ),
               ),
@@ -445,6 +456,64 @@ class _ServiceProvidePendingTicketState
       }
     } catch (e) {
       print("Error Fetching tickets: $e");
+    }
+  }
+
+  Future<void> sendNotificationViaGet(
+      String url, String token, String title, String message) async {
+    final queryParameters = {
+      'token': token,
+      'title': title,
+      'message': message,
+    };
+
+    // Construct the URI with query parameters
+    final uri = Uri.parse(url);
+    //.replace(queryParameters: queryParameters);
+    print(uri);
+
+    try {
+      final response = await http.post(uri,
+          headers: {
+            'Content-Type':
+                'application/json', // Set content type if sending JSON
+          },
+          body: jsonEncode(queryParameters));
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        // Parse the response body if needed
+        final data = response.body;
+        print('Response data: $data');
+      } else {
+        print('Failed to fetch data. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<String> getFcmToken(String userId) async {
+    try {
+      // Fetch the document for the given userId
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('FcmToken')
+          .doc(userId)
+          .get();
+
+      // Check if the document exists
+      if (userDoc.exists) {
+        // Retrieve the token from the document
+        String fcmToken = userDoc[
+            'fcmToken']; // 'token' is the field where the FCM token is stored
+        return fcmToken;
+      } else {
+        // Handle case where document does not exist
+        return '';
+      }
+    } catch (e) {
+      // Handle any errors
+      print('Error fetching FCM token: $e');
+      return '';
     }
   }
 }

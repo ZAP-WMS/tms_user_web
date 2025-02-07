@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_network/image_network.dart';
 import 'package:tms_useweb_app/utils/app_dimensions.dart';
 import 'package:tms_useweb_app/widgets/inside_pageappBar.dart';
+import 'package:tms_useweb_app/widgets/loading_page.dart';
 
 class PendingTicket extends StatefulWidget {
   String userId;
@@ -57,6 +60,7 @@ class _PendingTicketState extends State<PendingTicket> {
       Icons.layers,
       Icons.room,
       Icons.account_balance,
+      Icons.person,
       Icons.comment,
       Icons.design_services
     ];
@@ -66,68 +70,132 @@ class _PendingTicketState extends State<PendingTicket> {
       'Floor',
       'Room',
       'Assets',
+      'User',
       'Remark',
       'Service Provider'
     ];
     return Scaffold(
         appBar: commonAppBar(title: 'Pending Tickets', onBackPressed: () {}),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const LoadingPage()
             : ticketList.isNotEmpty
                 ? GridView.builder(
                     padding:
-                        AppDimensions.getPadding(context, percentage: 0.05),
+                        AppDimensions.getPadding(context, percentage: 0.02),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisSpacing: 1.2,
-                            childAspectRatio: 1.0,
+                            childAspectRatio: 0.8,
                             crossAxisCount: 3),
                     itemCount: ticketList.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                          margin: AppDimensions.getPadding(context,
-                              percentage: 0.005),
-                          color: const Color.fromARGB(255, 240, 210, 247),
-                          elevation: 10,
-                          shadowColor: Colors.red,
-                          child: Container(
-                              width: AppDimensions.getWidth(context,
-                                  percentage: 0.05),
-                              height: AppDimensions.getHeight(context,
-                                  percentage: 0.2),
-                              padding: AppDimensions.getPadding(context,
-                                  percentage: 0.02),
-                              child: Column(
-                                children: [
-                                  Text(ticketListData[index]['tickets'],
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                  Expanded(
-                                    child: ListView.builder(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: titles.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index2) {
-                                          message = [
-                                            ticketListData[index]['work'],
-                                            ticketListData[index]['building'],
-                                            ticketListData[index]['floor'],
-                                            ticketListData[index]['room'],
-                                            ticketListData[index]['asset'],
-                                            ticketListData[index]['remark']
-                                                .toString(),
-                                            ticketListData[index]
-                                                ['serviceProvider']
-                                          ];
+                      List<dynamic> imageFilePaths =
+                          ticketListData[index]['imageFilePaths'];
+                      return SizedBox.expand(
+                        child: Card(
+                            margin: AppDimensions.getPadding(context,
+                                percentage: 0.001),
+                            color: const Color.fromARGB(255, 240, 210, 247),
+                            elevation: 10,
+                            shadowColor: Colors.red,
+                            child: Container(
+                                width: AppDimensions.getWidth(context,
+                                    percentage: 0.05),
+                                height: AppDimensions.getHeight(context,
+                                    percentage: 0.15),
+                                padding: AppDimensions.getPadding(context,
+                                    percentage: 0.001),
+                                child: Column(
+                                  children: [
+                                    Text(ticketListData[index]['tickets'],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                    Expanded(
+                                      child: ListView.builder(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: titles.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index2) {
+                                            message = [
+                                              ticketListData[index]['work'],
+                                              ticketListData[index]['building'],
+                                              ticketListData[index]['floor'],
+                                              ticketListData[index]['room'],
+                                              ticketListData[index]['asset'],
+                                              ticketListData[index]['name'],
+                                              ticketListData[index]['remark']
+                                                  .toString(),
+                                              ticketListData[index]
+                                                  ['serviceProvider']
+                                            ];
 
-                                          return customCard(icons[index2],
-                                              titles[index2], message[index2]);
-                                        }),
-                                  ),
-                                ],
-                              )));
+                                            return customCard(
+                                                icons[index2],
+                                                titles[index2],
+                                                message[index2]);
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: List.generate(
+                                              imageFilePaths.length, (index2) {
+                                            return ImageNetwork(
+                                              onTap: () {
+                                                Get.defaultDialog(
+                                                  radius: 10,
+                                                  title: '',
+                                                  content: ImageNetwork(
+                                                    image:
+                                                        imageFilePaths[index2],
+                                                    height: AppDimensions.getHeight(
+                                                        context,
+                                                        percentage:
+                                                            0.7), // Set the height of the image
+                                                    width:
+                                                        AppDimensions.getWidth(
+                                                            context,
+                                                            percentage: 0.5),
+                                                  ),
+                                                );
+                                                // Navigator.push(
+                                                //     context,
+                                                //     MaterialPageRoute(
+                                                //         builder: (context) =>
+                                                //             ImageScreen(
+                                                //               pageTitle:
+                                                //                   ticketListData[
+                                                //                           index]
+                                                //                       [
+                                                //                       'tickets'],
+                                                //               imageFiles:
+                                                //                   imageFilePaths,
+                                                //               initialIndex:
+                                                //                   index2,
+                                                //               imageFile:
+                                                //                   imageFilePaths[
+                                                //                       index2],
+                                                //               ticketId:
+                                                //                   ticketList[
+                                                //                       index],
+                                                //             )));
+                                              },
+                                              image: imageFilePaths[index2],
+                                              height:
+                                                  50, // Set the height of the image
+                                              width: 50,
+                                            );
+                                          }),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ))),
+                      );
                     },
                   )
                 : const Center(
@@ -137,7 +205,7 @@ class _PendingTicketState extends State<PendingTicket> {
 
   Widget customCard(IconData icons, String title, String message) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -160,6 +228,7 @@ class _PendingTicketState extends State<PendingTicket> {
               width: 100,
               child: Text(
                 message,
+                softWrap: true,
                 style: const TextStyle(fontSize: 15),
               ),
             ),
