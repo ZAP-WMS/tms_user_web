@@ -92,7 +92,7 @@ class _RaiseTicketState extends State<RaiseTicket> {
                 child: Container(
                   alignment: Alignment.centerLeft,
                   width: AppDimensions.getWidth(context, percentage: 0.7),
-                  height: AppDimensions.getHeight(context, percentage: 0.6),
+                  height: AppDimensions.getHeight(context, percentage: 0.7),
                   decoration: BoxDecoration(
                       boxShadow: const [],
                       border: Border.all(color: AppColors.textWhite),

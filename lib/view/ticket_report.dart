@@ -84,6 +84,7 @@ class _TicketReportState extends State<TicketReport> {
   @override
   void initState() {
     dataProvider = Provider.of<ReportProvider>(context, listen: false);
+    dataProvider.resetSelections();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUserRole();
@@ -301,6 +302,7 @@ class _TicketReportState extends State<TicketReport> {
                       });
 
                       if (atLeastOneAvailable) {
+                        dataProvider.resetSelections();
                         showDialog(
                           context: context,
                           builder: (context) {

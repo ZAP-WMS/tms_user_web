@@ -70,8 +70,8 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 30),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     ListTile(
                       leading: Icon(Icons.settings),
                       title: Text('Settings'),
