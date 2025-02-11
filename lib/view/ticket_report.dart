@@ -102,7 +102,9 @@ class _TicketReportState extends State<TicketReport> {
 
   Future initialize() async {
     await dataProvider.fetchFloorNumbers();
-    await dataProvider.fetchTicketNumbers(widget.userID);
+    userRole!.isEmpty
+        ? await dataProvider.fetchTicketNumbers(widget.userID)
+        : await dataProvider.fetchServiceProviderTicketNumbers(widget.userID);
     await dataProvider.fetchBuildingNumbers();
     await dataProvider.fetchRoomNumbers();
     await dataProvider.fetchWorkList();
@@ -303,6 +305,8 @@ class _TicketReportState extends State<TicketReport> {
 
                       if (atLeastOneAvailable) {
                         dataProvider.resetSelections();
+                        selectedStartDate = '';
+                        selectedEndDate = '';
                         showDialog(
                           context: context,
                           builder: (context) {

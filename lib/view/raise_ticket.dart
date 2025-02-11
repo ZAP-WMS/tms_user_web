@@ -380,6 +380,7 @@ class _RaiseTicketState extends State<RaiseTicket> {
                                           provider.resetSelections();
                                           remarkController.clear();
                                           images.clear();
+                                          imageBytesList.clear();
                                           Imagenames!.clear();
 
                                           Navigator.pop(context);

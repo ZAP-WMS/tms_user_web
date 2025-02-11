@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tms_useweb_app/utils/colors.dart';
 import 'package:tms_useweb_app/widgets/inside_pageappBar.dart';
+import 'package:tms_useweb_app/widgets/loading_page.dart';
 import '../../provider/filter_provider.dart';
 import '../../utils/app_dimensions.dart';
 import 'package:http/http.dart' as http;
@@ -137,14 +138,11 @@ class _ServiceProvidePendingTicketState
       body: Consumer<FilterProvider>(
         builder: (context, value, child) {
           return value.serviceLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                ))
+              ? const Center(child: LoadingPage())
               : value.servicependingData.isNotEmpty
                   ? GridView.builder(
                       padding:
-                          AppDimensions.getPadding(context, percentage: 0.05),
+                          AppDimensions.getPadding(context, percentage: 0.02),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisSpacing: 1.2,
@@ -162,9 +160,9 @@ class _ServiceProvidePendingTicketState
                             width: AppDimensions.getWidth(context,
                                 percentage: 0.05),
                             height: AppDimensions.getHeight(context,
-                                percentage: 0.2),
+                                percentage: 0.5),
                             padding: AppDimensions.getPadding(context,
-                                percentage: 0.02),
+                                percentage: 0.01),
                             child: Column(
                               children: [
                                 Text(value.servicependingData[index]['tickets'],

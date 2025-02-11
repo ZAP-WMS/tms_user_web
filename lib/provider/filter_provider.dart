@@ -76,8 +76,10 @@ class FilterProvider with ChangeNotifier {
               .where('serviceProviderId', isEqualTo: userId)
               .get();
         }
+        print('RaisedTicketId ${raisedTicket.id}');
 
         for (DocumentSnapshot ticket in ticketsSnapshot.docs) {
+          print('TicketId ${raisedTicket.id}');
           // Fetch each ticket document
           DocumentSnapshot ticketData = await _firestore
               .collection('raisedTickets')

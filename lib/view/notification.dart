@@ -34,7 +34,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
   final String imagePath = 'Images/';
   // List<String> _imageUrls = [];
   bool _isLoading = true;
-  bool _isFirstTime = true;
   // String? userId;
   final SplashService _splashService = SplashService();
   late final FilterProvider filterProvider;

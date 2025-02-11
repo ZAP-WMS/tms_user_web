@@ -133,6 +133,42 @@ class ReportProvider extends ChangeNotifier {
           .collection('tickets')
           .where('user', isEqualTo: userId)
           .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Access the document's data as a Map
+        tickets.addAll(querySnapshot.docs.map((e) => e.id).toList());
+      }
+    }
+
+    _ticketNumberList = tickets.toList();
+    _ticketNumberList = tickets.reversed.toList();
+
+    _ticketNumberList.sort((a, b) {
+      DateTime dateA = parseDate(a);
+      DateTime dateB = parseDate(b);
+      return dateB.compareTo(dateA);
+    });
+
+    notifyListeners();
+  }
+
+  Future<void> fetchServiceProviderTicketNumbers(String userId) async {
+    List<String> dates = [];
+    List<String> tickets = [];
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('raisedTickets').get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      dates = querySnapshot.docs.map((e) => e.id).toList();
+    }
+    for (var date in dates) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('raisedTickets')
+          .doc(date)
+          .collection('tickets')
+          .where('serviceProviderId', isEqualTo: userId)
+          .get();
+
       if (querySnapshot.docs.isNotEmpty) {
         // Access the document's data as a Map
         tickets.addAll(querySnapshot.docs.map((e) => e.id).toList());
@@ -260,7 +296,6 @@ class ReportProvider extends ChangeNotifier {
         }
       }
 
-      // Notify listeners after updating the list
       notifyListeners();
     } catch (e) {
       // Handle any errors (optional)
