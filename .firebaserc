@@ -1,6 +1,5 @@
 {
   "projects": {
-    "target": "tms",
     "default": "tmsapp-53ebc"
   },
   "targets": {
@@ -8,12 +7,6 @@
       "hosting": {
         "tr": [
           "tmswebapp"
-        ],
-        "target": [
-          "userwebapp"
-        ],
-        "tms": [
-          "tmswebapp.web.app"
         ]
       }
     }

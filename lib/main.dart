@@ -11,15 +11,14 @@ import 'view/LoginPage/login_page.dart';
 
 void main() async {
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-        apiKey: "AIzaSyA6-g-Dbb6c5B_hFhGvANlznlixlPgKx6k",
-        authDomain: "tmsapp-53ebc.firebaseapp.com",
-        projectId: "tmsapp-53ebc",
-        storageBucket: "tmsapp-53ebc.appspot.com",
-        messagingSenderId: "190167031121",
-        appId: "1:190167031121:android:f2cd05b74edb7dd581c770",
-        measurementId: "G-88TQTEM40C"),
-  );
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyA6-g-Dbb6c5B_hFhGvANlznlixlPgKx6k",
+          authDomain: "tmsapp-53ebc.firebaseapp.com",
+          projectId: "tmsapp-53ebc",
+          storageBucket: "tmsapp-53ebc.appspot.com",
+          messagingSenderId: "190167031121",
+          appId: "1:190167031121:android:f2cd05b74edb7dd 581c770",
+          measurementId: "G-88TQTEM40C"))  ;
 
   runApp(const MyApp());
 }
