@@ -13,6 +13,7 @@ class AppColors {
   // Text Colors
   static const Color appBlackColor = Color(0xFF000000); // Black
   static const Color textSecondaryColor = Color(0xFF757575); // Gray
+  static const Color dartGreyColor = Color(0xff49454f);
   static const Color textWhite = Color(0xFFFFFFFF); // White
 
   // Error Colors

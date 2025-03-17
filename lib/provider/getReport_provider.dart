@@ -40,6 +40,8 @@ class ReportProvider extends ChangeNotifier {
   String? get selectedAsset => _selectedAsset;
   String? get selectUser => _selectedUsers;
 
+  String? _selectedStatus;
+
   void building(String value) {
     _selectedBuilding = value;
     notifyListeners();
@@ -362,5 +364,41 @@ class ReportProvider extends ChangeNotifier {
     _selectedServiceProvider = null;
     _selectedUsers = null;
     notifyListeners();
+  }
+
+  void clearSelection(String selection) {
+    switch (selection) {
+      case 'status':
+        _selectStatus = null;
+        break;
+      case 'building':
+        _selectedBuilding = null;
+        break;
+      case 'floor':
+        _selectedFloor = null;
+        break;
+      case 'room':
+        _selectedRoom = null;
+        break;
+      case 'work':
+        _selectedWork = null;
+        break;
+      case 'ticket':
+        _selectedTicket = null;
+        break;
+      case 'serviceProvider':
+        _selectedServiceProvider = null;
+        break;
+      case 'asset':
+        _selectedAsset = null;
+        break;
+      case 'users':
+        _selectedUsers = null;
+        break;
+      default:
+        // If no case matches, do nothing or you can throw an exception
+        break;
+    }
+    notifyListeners(); // Notify listeners to update UI
   }
 }

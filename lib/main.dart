@@ -18,7 +18,7 @@ void main() async {
           storageBucket: "tmsapp-53ebc.appspot.com",
           messagingSenderId: "190167031121",
           appId: "1:190167031121:android:f2cd05b74edb7dd 581c770",
-          measurementId: "G-88TQTEM40C"))  ;
+          measurementId: "G-88TQTEM40C"));
 
   runApp(const MyApp());
 }

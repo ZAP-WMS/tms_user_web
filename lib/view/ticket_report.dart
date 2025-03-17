@@ -144,26 +144,53 @@ class _TicketReportState extends State<TicketReport> {
                         width: MediaQuery.of(context).size.width * 0.95,
                         height: 60,
                         child: TextButton(
-                          onPressed: () {
-                            pickDateRange();
-                            setState(() {});
-                          },
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                    text: 'Search Date \n',
-                                    style: AppTextStyles.boldBlackColor,
-                                    children: [
-                                      TextSpan(
-                                          text: selectedStartDate.isNotEmpty
-                                              ? " $selectedStartDate TO $selectedEndDate  "
-                                              : '',
-                                          style: AppTextStyles.boldBlackColor),
-                                    ])),
-                          ),
-                        ),
+                            onPressed: () {
+                              pickDateRange();
+                              setState(() {});
+                            },
+                            child: Row(
+                              spacing: 10.0,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Spacer(),
+                                Text('Choose Date :',
+                                    style: AppTextStyles.boldBlackColor),
+                                Text(
+                                  selectedStartDate.isNotEmpty
+                                      ? " $selectedStartDate     TO     $selectedEndDate  "
+                                      : '',
+                                  style: AppTextStyles.boldBlackColor,
+                                ),
+                                const Spacer(),
+                                IconButton(
+                                  alignment: Alignment.bottomRight,
+                                  iconSize: 23,
+                                  icon: const Icon(Icons.cancel,
+                                      color: AppColors.dartGreyColor),
+                                  onPressed: () {
+                                    selectedStartDate = '';
+                                    selectedEndDate = '';
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            )
+                            //  Align(
+                            //   alignment: Alignment.center,
+                            //   child: RichText(
+                            //       textAlign: TextAlign.center,
+                            //       text: TextSpan(
+                            //           text: 'Search Date',
+                            //           style: AppTextStyles.boldBlackColor,
+                            //           children: [
+                            //             TextSpan(
+                            //                 text: selectedStartDate.isNotEmpty
+                            //                     ? " $selectedStartDate     TO     $selectedEndDate  "
+                            //                     : '',
+                            //                 style: AppTextStyles.boldBlackColor),
+                            //           ])),
+                            // ),
+                            ),
                       )),
                   Row(
                     children: [
@@ -175,6 +202,9 @@ class _TicketReportState extends State<TicketReport> {
                         onChanged: (value) {
                           provider.status(value.toString());
                         },
+                        clearAction: () {
+                          provider.clearSelection('status');
+                        },
                         searchController: statusController,
                       ),
                       customDropDown(
@@ -184,6 +214,9 @@ class _TicketReportState extends State<TicketReport> {
                         selectedValue: provider.selectedFloor,
                         onChanged: (value) {
                           provider.floor(value.toString());
+                        },
+                        clearAction: () {
+                          provider.clearSelection('floor');
                         },
                         searchController: floorController,
                       ),
@@ -199,6 +232,9 @@ class _TicketReportState extends State<TicketReport> {
                         onChanged: (value) {
                           provider.ticket(value.toString());
                         },
+                        clearAction: () {
+                          provider.clearSelection('ticket');
+                        },
                         searchController: ticketController,
                       ),
                       customDropDown(
@@ -208,6 +244,9 @@ class _TicketReportState extends State<TicketReport> {
                         selectedValue: provider.selectedRoom,
                         onChanged: (value) {
                           provider.room(value.toString());
+                        },
+                        clearAction: () {
+                          provider.clearSelection('room');
                         },
                         searchController: roomController,
                       ),
@@ -222,9 +261,9 @@ class _TicketReportState extends State<TicketReport> {
                         selectedValue: provider.selectedWork,
                         onChanged: (value) {
                           provider.work(value.toString());
-                          // setState(() {
-                          //   // selectedValue = value;
-                          // });
+                        },
+                        clearAction: () {
+                          provider.clearSelection('work');
                         },
                         searchController: workController,
                       ),
@@ -235,6 +274,9 @@ class _TicketReportState extends State<TicketReport> {
                         selectedValue: provider.selectedAsset,
                         onChanged: (value) {
                           provider.asset(value.toString());
+                        },
+                        clearAction: () {
+                          provider.clearSelection('asset');
                         },
                         searchController: assetController,
                       ),
@@ -249,6 +291,9 @@ class _TicketReportState extends State<TicketReport> {
                         selectedValue: provider.selectedBuilding,
                         onChanged: (value) {
                           provider.building(value.toString());
+                        },
+                        clearAction: () {
+                          provider.clearSelection('building');
                         },
                         searchController: buildingController,
                       ),
@@ -268,91 +313,109 @@ class _TicketReportState extends State<TicketReport> {
                               ? provider.serviceProvider(value.toString())
                               : provider.usersName(value.toString());
                         },
+                        clearAction: () {
+                          userRole!.isEmpty
+                              ? provider.clearSelection('serviceProvider')
+                              : provider.clearSelection('users');
+                        },
                         searchController: serviceProviderController,
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  CustomButton(
-                    text: 'Get Report',
-                    width: 150,
-                    onPressed: () {
-                      // showSavingDialog(context, 'Fetching...');
-                      Map<String, dynamic> selectedItemsMap = {
-                        'selectedStatus': provider.selectedStatus,
-                        'selectedTicket': provider.selectedTicket,
-                        'selectedWork': provider.selectedWork,
-                        'selectedBuilding': provider.selectedBuilding,
-                        'selectedFloor': provider.selectedFloor,
-                        'selectedRoom': provider.selectedRoom,
-                        'selectedAsset': provider.selectedAsset,
-                        'selectedServiceProvider': provider.selectedService,
-                        'selectedUser': provider.selectUser,
-                        'selectedStartDate': selectedStartDate,
-                        'selectedEndDate': selectedEndDate,
-                      };
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomButton(
+                        text: 'Get Report',
+                        width: 150,
+                        onPressed: () {
+                          // showSavingDialog(context, 'Fetching...');
+                          Map<String, dynamic> selectedItemsMap = {
+                            'selectedStatus': provider.selectedStatus,
+                            'selectedTicket': provider.selectedTicket,
+                            'selectedWork': provider.selectedWork,
+                            'selectedBuilding': provider.selectedBuilding,
+                            'selectedFloor': provider.selectedFloor,
+                            'selectedRoom': provider.selectedRoom,
+                            'selectedAsset': provider.selectedAsset,
+                            'selectedServiceProvider': provider.selectedService,
+                            'selectedUser': provider.selectUser,
+                            'selectedStartDate': selectedStartDate,
+                            'selectedEndDate': selectedEndDate,
+                          };
 
-                      bool atLeastOneAvailable =
-                          selectedItemsMap.values.any((value) {
-                        if (value == null) {
-                          return false; // Check if the value is null
-                        }
-                        if (value is String && value.isEmpty) {
-                          return false; // Check if the value is an empty string
-                        }
-                        return true; // Return true if the value is not null and not empty
-                      });
+                          bool atLeastOneAvailable =
+                              selectedItemsMap.values.any((value) {
+                            if (value == null) {
+                              return false; // Check if the value is null
+                            }
+                            if (value is String && value.isEmpty) {
+                              return false; // Check if the value is an empty string
+                            }
+                            return true; // Return true if the value is not null and not empty
+                          });
 
-                      if (atLeastOneAvailable) {
-                        dataProvider.resetSelections();
-                        selectedStartDate = '';
-                        selectedEndDate = '';
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                              // Set the alignment of the dialog to the right and set a custom width
-                              child: Align(
-                                alignment: Alignment
-                                    .center, // Align the dialog content to the right
-                                child: Container(
-                                    width: AppDimensions.getWidth(context,
-                                        percentage: 0.9),
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: ReportDetails(
-                                        userId: widget.userID,
-                                        ticketList: ticketList,
-                                        ticketData: filterData,
-                                        filterFieldData: selectedItemsMap,
-                                        userRole: userRole!)),
-                              ),
+                          if (atLeastOneAvailable) {
+                            dataProvider.resetSelections();
+                            selectedStartDate = '';
+                            selectedEndDate = '';
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  child: Align(
+                                    alignment: Alignment
+                                        .center, // Align the dialog content to the right
+                                    child: Container(
+                                        width: AppDimensions.getWidth(context,
+                                            percentage: 0.9),
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: ReportDetails(
+                                            userId: widget.userID,
+                                            ticketList: ticketList,
+                                            ticketData: filterData,
+                                            filterFieldData: selectedItemsMap,
+                                            userRole: userRole!)),
+                                  ),
+                                );
+                                // ReportDetails(
+                                //   ticketList: ['u'],
+                                //   ticketData: ['u'],
+                                //   filterFieldData: {},
+                                //   userRole: ['7'],
+                                // );
+                                //  AlertDialog(
+                                //   title: Text('Ticket Raised'),
+                                //   content: Text(
+                                //       'Your ticket has been successfully raised!'),
+                                //   actions: [
+                                //     TextButton(
+                                //       onPressed: () => Navigator.pop(context),
+                                //       child: Text('Close'),
+                                //     ),
+                                //   ],
+                                // );
+                              },
                             );
-                            // ReportDetails(
-                            //   ticketList: ['u'],
-                            //   ticketData: ['u'],
-                            //   filterFieldData: {},
-                            //   userRole: ['7'],
-                            // );
-                            //  AlertDialog(
-                            //   title: Text('Ticket Raised'),
-                            //   content: Text(
-                            //       'Your ticket has been successfully raised!'),
-                            //   actions: [
-                            //     TextButton(
-                            //       onPressed: () => Navigator.pop(context),
-                            //       child: Text('Close'),
-                            //     ),
-                            //   ],
-                            // );
-                          },
-                        );
-                      } else {
-                        Navigator.pop(context);
-                        popupAlertmessage('Please select any filter');
-                      }
-                      //});
-                    },
-                    textColor: AppColors.backgroundColor,
+                          } else {
+                            Navigator.pop(context);
+                            popupAlertmessage('Please select any filter');
+                          }
+                          //});
+                        },
+                        textColor: AppColors.backgroundColor,
+                      ),
+                      const SizedBox(width: 20),
+                      CustomButton(
+                          text: 'Clear',
+                          width: 150,
+                          onPressed: () {
+                            provider.resetSelections();
+                            selectedStartDate = '';
+                            selectedEndDate = '';
+                          })
+                    ],
                   ),
                 ],
               ),
@@ -392,6 +455,7 @@ class _TicketReportState extends State<TicketReport> {
     required String hintText,
     required int index,
     required String? selectedValue,
+    required Function? clearAction,
     required ValueChanged<String?> onChanged,
     required TextEditingController searchController,
   }) {
@@ -405,63 +469,80 @@ class _TicketReportState extends State<TicketReport> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DropdownButtonHideUnderline(
-                child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: Text(hintText, style: AppTextStyles.boldBlackColor),
-                  items: customDropDownList
-                      .map((item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: AppTextStyles.boldBlackColor,
-                            ),
-                          ))
-                      .toList(),
-                  value: selectedValue,
-                  onChanged: onChanged,
-                  buttonStyleData: const ButtonStyleData(
-                    decoration: BoxDecoration(),
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    height: 50,
-                    width: double.infinity,
-                  ),
-                  dropdownStyleData: const DropdownStyleData(
-                    maxHeight: 200,
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    height: 40,
-                  ),
-                  dropdownSearchData: DropdownSearchData(
-                    searchController: searchController,
-                    searchInnerWidgetHeight: 50,
-                    searchInnerWidget: Container(
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: TextFormField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
-                          hintText: hintText,
-                          hintStyle: const TextStyle(fontSize: 12),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint:
+                            Text(hintText, style: AppTextStyles.boldBlackColor),
+                        items: customDropDownList
+                            .map((item) => DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: AppTextStyles.boldBlackColor,
+                                  ),
+                                ))
+                            .toList(),
+                        value: selectedValue,
+                        onChanged: onChanged,
+                        buttonStyleData: const ButtonStyleData(
+                          decoration: BoxDecoration(),
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          height: 50,
+                          width: double.infinity,
                         ),
+                        dropdownStyleData: const DropdownStyleData(
+                          maxHeight: 200,
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                        ),
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: searchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: TextFormField(
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                hintText: hintText,
+                                hintStyle: const TextStyle(fontSize: 12),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value.toString().contains(searchValue);
+                          },
+                        ),
+                        onMenuStateChange: (isOpen) {
+                          if (!isOpen) {
+                            searchController.clear();
+                          }
+                        },
                       ),
                     ),
-                    searchMatchFn: (item, searchValue) {
-                      return item.value.toString().contains(searchValue);
-                    },
                   ),
-                  onMenuStateChange: (isOpen) {
-                    if (!isOpen) {
-                      searchController.clear();
-                    }
-                  },
-                ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                    child: IconButton(
+                      icon: const Icon(Icons.cancel),
+                      onPressed: () {
+                        clearAction?.call();
+                      },
+                    ),
+                  )
+                ],
               ),
             ],
           ),
@@ -473,10 +554,8 @@ class _TicketReportState extends State<TicketReport> {
   Future<void> pickDateRange() async {
     DateTimeRange? newDateRange = await showDateRangePicker(
       context: context,
-
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
-      saveText: "OK",
       // initialEntryMode: DatePickerEntryMode.input,
     );
     if (newDateRange == null) return;
@@ -484,9 +563,7 @@ class _TicketReportState extends State<TicketReport> {
       dateRange = newDateRange;
       rangeStartDate = dateRange.start;
       rangeEndDate = dateRange.end;
-
       selectedStartDate = DateFormat('dd-MM-yyyy').format(rangeStartDate);
-
       selectedEndDate = DateFormat('dd-MM-yyyy').format(rangeEndDate!);
     });
   }
